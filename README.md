@@ -7,7 +7,7 @@ Exercises for understanding the Asynchronous nature of JavaScript.
 
 - Asynchronous vs synchronous
 - Asynchronous patterns:
-  - Callbacks
+  - [Callbacks](https://github.com/narcisabadea/Asynchronous-JS/blob/main/node/callbacks.md)
   - Promises
   - Async/Await
   - Generators
