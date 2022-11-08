@@ -1,4 +1,4 @@
-# Asynchronous JavasScript
+# Asynchronous JavaScript
 
 Exercises for understanding the Asynchronous nature of JavaScript.
 <!-- Course https://www.udemy.com/course/asynchronous-javascript/ -->
