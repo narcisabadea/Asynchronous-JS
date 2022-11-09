@@ -316,7 +316,7 @@ Promise.race([car1, car2, car3])
   });
 ```
 
-# Question 1 - (10min)
+# Question 1 
 
 Create a promise version of the async readFile function
 
