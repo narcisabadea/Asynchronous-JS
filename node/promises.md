@@ -548,6 +548,22 @@ function readFileFake(sleep) {
 readFileFake(5000); // This resolves a promise after 5 seconds, pretend it's a large file being read from disk
 ```
 
+Solution:
+
+```js
+function readFileFake(sleep) {
+  return new Promise((resolve) => setTimeout(resolve, sleep, "read"));
+}
+
+function timeout(sleep) {
+  return new Promise((_, reject) => setTimeout(reject, sleep, "timeout"));
+}
+
+Promise.race([readFileFake(5000), timeout(1000)])
+  .then((data) => console.log(data))
+  .catch((err) => console.error(err));
+```
+
 # Question 6
 
 Create a process flow which publishes a file from a server, then realises the user needs to login, then makes a login request, the whole chain should error out if it takes longer than 1 seconds. Use `catch` to handle errors and timeouts.
@@ -571,22 +587,6 @@ Promise.race( [publish(), timeout(3000)])
   .then(...)
   .then(...)
   .catch(...);
-```
-
-# Answer 5
-
-```js
-function readFileFake(sleep) {
-  return new Promise((resolve) => setTimeout(resolve, sleep, "read"));
-}
-
-function timeout(sleep) {
-  return new Promise((_, reject) => setTimeout(reject, sleep, "timeout"));
-}
-
-Promise.race([readFileFake(5000), timeout(1000)])
-  .then((data) => console.log(data))
-  .catch((err) => console.error(err));
 ```
 
 Solution:
