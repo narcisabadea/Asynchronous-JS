@@ -10,6 +10,6 @@ Exercises for understanding the Asynchronous nature of JavaScript.
 - Asynchronous patterns:
   - [Callbacks](https://github.com/narcisabadea/Asynchronous-JS/blob/main/node/callbacks.md)
   - [Promises](https://github.com/narcisabadea/Asynchronous-JS/blob/main/node/promises.md)
-  - Async/Await
+  - [Async/Await](https://github.com/narcisabadea/Asynchronous-JS/blob/main/node/async-await.md)
   - Generators
 - Event loop

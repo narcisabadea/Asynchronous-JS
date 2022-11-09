@@ -10,7 +10,7 @@ When using promises we attach a then
 
 ```js
 const doAsyncTask = () => Promise.resolve("done");
-doAsyncTask().then(val => console.log(val));
+doAsyncTask().then((val) => console.log(val));
 console.log("here"); // <-- this is called first!
 ```
 
@@ -30,7 +30,7 @@ can write that as an IFFE
 
 ```js
 const doAsyncTask = () => Promise.resolve("done");
-(async function() {
+(async function () {
   // <-- IIFE, note the async
   let value = await doAsyncTask(); // <-- Don't need to call .then
   console.log(value);
@@ -41,7 +41,7 @@ Also it blocks
 
 ```js
 const doAsyncTask = () => Promise.resolve("1");
-(async function() {
+(async function () {
   let value = await doAsyncTask();
   console.log(value);
   console.log("2"); //----> This waits before it's printed
@@ -52,7 +52,7 @@ vs. without the await, it prints the other way round
 
 ```js
 const doAsyncTask = () => Promise.resolve("1");
-(async function() {
+(async function () {
   doAsyncTask().then(console.log);
   console.log("2");
 })();
@@ -62,13 +62,13 @@ const doAsyncTask = () => Promise.resolve("1");
 
 ```js
 const doAsyncTask = () => Promise.resolve("1");
-let asyncFunction = async function() {
+let asyncFunction = async function () {
   let value = await doAsyncTask();
   console.log(value);
   console.log("2");
   return "3"; // Whatever we return is like a resolve
 };
-asyncFunction().then(v => console.log(v)); // We can attach a then to it
+asyncFunction().then((v) => console.log(v)); // We can attach a then to it
 ```
 
 ## Handling Errors
@@ -77,7 +77,7 @@ asyncFunction().then(v => console.log(v)); // We can attach a then to it
 
 ```js
 const doAsyncTask = () => Promise.reject("error");
-const asyncFunction = async function() {
+const asyncFunction = async function () {
   try {
     const value = await doAsyncTask();
   } catch (e) {
@@ -87,8 +87,6 @@ const asyncFunction = async function() {
 };
 asyncFunction();
 ```
-
-<!-- 🤔🤔🤔🤔🤔 QUIZ 1 🤔🤔🤔🤔🤔 -->
 
 ## Blocking != Fast
 
@@ -144,7 +142,7 @@ It's a subtle difference, but now you can iterate over iterators that return pro
   const readFile = util.promisify(fs.readFile);
 
   const files = ["./files/demofile.txt", "./files/demofile.other.txt"];
-  const promises = files.map(name => readFile(name, "utf8"));
+  const promises = files.map((name) => readFile(name, "utf8"));
   for await (let content of promises) {
     //<-- See the await is on the for
     console.log(content);
@@ -168,15 +166,15 @@ const customIterator = () => ({
       if (this.x > 100) {
         return {
           done: true,
-          value: this.x
+          value: this.x,
         };
       }
       return {
         done: false,
-        value: this.x++
+        value: this.x++,
       };
-    }
-  })
+    },
+  }),
 });
 
 for (let x of customIterator()) {
@@ -196,7 +194,7 @@ const customAsyncIterator = () => ({
       if (this.x > 100) {
         return Promise.resolve({
           done: true,
-          value: this.x
+          value: this.x,
         });
       }
 
@@ -204,10 +202,10 @@ const customAsyncIterator = () => ({
 
       return Promise.resolve({
         done: false,
-        value: y
+        value: y,
       });
-    }
-  })
+    },
+  }),
 });
 
 (async () => {
@@ -217,4 +215,114 @@ const customAsyncIterator = () => ({
 })();
 ```
 
-<!-- 🤔🤔🤔🤔🤔 QUIZ 2 🤔🤔🤔🤔🤔 -->
+# Question 1
+
+Convert the promise version of the multi-file loader over to using async/await
+
+```js
+const util = require("util");
+const fs = require("fs");
+const readFile = util.promisify(fs.readFile);
+
+const files = ["./files/demofile.txt", "./files/demofile.other.txt"];
+
+let promises = files.map((name) => readFile(name, { encoding: "utf8" }));
+Promise.all(promises).then((values) => {
+  // <-- Uses .all
+  console.log(values);
+});
+```
+
+Solution:
+
+This version answers the brief but is less efficient because each file is loaded in sequence, one at a time.
+
+```js
+const util = require("util");
+const fs = require("fs");
+const readFile = util.promisify(fs.readFile);
+
+const files = ["./files/demofile.txt", "./files/demofile.other.txt"];
+
+(async () => {
+  for (let name of files) {
+    console.log(await readFile(name, "utf8")); // <-- One file loaded at a time, instead of all files at once
+  }
+})();
+```
+
+This version is far more efficient, using `Promise.all` means we load both files in parralel.
+
+```js
+const util = require("util");
+const fs = require("fs");
+const readFile = util.promisify(fs.readFile);
+
+const files = ["./files/demofile.txt", "./files/demofile.other.txt"];
+
+(async () => {
+  let promises = files.map((name) => readFile(name, { encoding: "utf8" }));
+  let values = await Promise.all(promises);
+  console.log(values);
+})();
+```
+
+# Question 2
+
+Again convert the promise version of the multi-file loader over to using async/await but using a custom async iterator with the following syntax
+
+node --harmony-async-iteration <file.js>
+
+```js
+const fileIterator = (files) => ({
+  [Symbol.asyncIterator]: () => ({
+    x: 0,
+    next() {
+      // TODO
+    },
+  }),
+});
+
+(async () => {
+  for await (let x of fileIterator([
+    "./files/demofile.txt",
+    "./files/demofile.other.txt",
+  ])) {
+    console.log(x);
+  }
+})();
+```
+
+Solution:
+
+```js
+const util = require("util");
+const fs = require("fs");
+const readFile = util.promisify(fs.readFile);
+
+const fileIterator = (files) => ({
+  [Symbol.asyncIterator]: () => ({
+    x: 0,
+    next() {
+      if (this.x >= files.length) {
+        return {
+          done: true,
+        };
+      }
+      let file = files[this.x++];
+      return readFile(file, "utf8").then((data) => ({
+        done: false,
+        value: data,
+      }));
+    },
+  }),
+});
+
+const files = ["./files/demofile.txt", "./files/demofile.other.txt"];
+
+(async () => {
+  for await (let x of fileIterator(files)) {
+    console.log(x);
+  }
+})();
+```
