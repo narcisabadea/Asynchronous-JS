@@ -11,5 +11,5 @@ Exercises for understanding the Asynchronous nature of JavaScript.
   - [Callbacks](https://github.com/narcisabadea/Asynchronous-JS/blob/main/node/callbacks.md)
   - [Promises](https://github.com/narcisabadea/Asynchronous-JS/blob/main/node/promises.md)
   - [Async/Await](https://github.com/narcisabadea/Asynchronous-JS/blob/main/node/async-await.md)
-  - Generators
+  - [Generators](https://github.com/narcisabadea/Asynchronous-JS/blob/main/node/generators.md)
 - Event loop

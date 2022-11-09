@@ -2,10 +2,10 @@
 
 ## RunToCompletion vs RunStopRun
 
-* We've assumed something fundamental, one a function starts running it will complete/error/return before any other JS code can run.
-* A _generator_ is a function that can be paused in the middle of running, let you do something else, and then resumed later on from exactly the point it was paused.
-* Nothing can pause a generator from the outside, only a generator can pause itself by using the `yield` keyword.
-* Once it's yielded though only the code it yielded to can resume it's function.
+- We've assumed something fundamental, one a function starts running it will complete/error/return before any other JS code can run.
+- A _generator_ is a function that can be paused in the middle of running, let you do something else, and then resumed later on from exactly the point it was paused.
+- Nothing can pause a generator from the outside, only a generator can pause itself by using the `yield` keyword.
+- Once it's yielded though only the code it yielded to can resume it's function.
 
 ## Simple example to show how yield can pause execution midflow
 
@@ -105,4 +105,47 @@ function* range() {
 })();
 ```
 
-<!-- 🤔🤔🤔🤔🤔 QUIZ 1 🤔🤔🤔🤔🤔 -->
+# Question 1
+
+Create a custom async generator that loops over the files that are passed in.
+
+```js
+const util = require("util");
+const fs = require("fs");
+const readFile = util.promisify(fs.readFile);
+
+function* fileLoader(files) {...}
+
+(async () => {
+  for await (let contents of fileLoader([
+    "./files/demofile.txt",
+    "./files/demofile.other.txt"
+  ])) {
+    console.log(contents);
+  }
+})();
+```
+
+Solution:
+
+```js
+const util = require("util");
+const fs = require("fs");
+const readFile = util.promisify(fs.readFile);
+
+function* fileLoader(files) {
+  const promises = files.map((name) => readFile(name, "utf8"));
+  for (let promise of promises) {
+    yield promise;
+  }
+}
+
+(async () => {
+  for await (let contents of fileLoader([
+    "./files/demofile.txt2",
+    "./files/demofile.other.txt",
+  ])) {
+    console.log(contents);
+  }
+})();
+```
