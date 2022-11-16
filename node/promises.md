@@ -87,9 +87,9 @@ function doAsyncTask() {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       if (error) {
-        reject("error"); // pass values
+        reject("error");
       } else {
-        resolve("done"); // pass values
+        resolve("done");
       }
     }, 1000);
   });
@@ -316,7 +316,7 @@ Promise.race([car1, car2, car3])
   });
 ```
 
-# Question 1 
+# Question 1
 
 Create a promise version of the async readFile function
 
@@ -339,10 +339,11 @@ Create a promise version of the async readFile
 
 ```js
 const fs = require("fs");
+// can use this promisify method
 // const util = require("util");
-
 // const readFile = util.promisify(fs.readFile);
 
+// can use the classic way
 function readFile(filename, encoding) {
   return new Promise((resolve, reject) => {
     fs.readFile(filename, encoding, (err, data) => {
